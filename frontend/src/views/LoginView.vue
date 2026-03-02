@@ -1,39 +1,57 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-slate-900 overflow-hidden relative">
+  <div class="flex items-center justify-center min-h-screen bg-gray-50 text-gray-800">
     <Toast />
-    <div class="absolute inset-0 z-0 overflow-hidden">
-        <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full"></div>
-        <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-indigo-600/20 blur-[100px] rounded-full"></div>
-    </div>
 
-    <div class="p-10 bg-white/10 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl w-full max-w-md z-10">
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-black text-white tracking-tight uppercase">Nexus</h2>
-        <p class="text-white/60 text-sm mt-2">Accede a tu panel de control</p>
+    <div class="px-8 py-10 bg-white shadow-xl rounded-2xl w-full max-w-md border border-gray-100">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Bienevenido</h2>
+        <p class="text-gray-500 text-sm mt-2">Inicia sesión en tu cuenta</p>
       </div>
       
-      <form @submit.prevent="handleLogin" class="space-y-6">
+      <form @submit.prevent="onSubmit" class="space-y-5">
         <div>
-          <label class="block text-xs font-bold text-white/50 uppercase mb-2 ml-1">Correo Electrónico</label>
-          <InputText v-model="email" type="email" class="w-full bg-white/5 border-white/10 text-white p-3 rounded-xl focus:ring-2 focus:ring-blue-500/50" placeholder="admin@nexus.com" required />
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-white/50 uppercase mb-2 ml-1">Contraseña</label>
-          <Password v-model="password" :feedback="false" toggleMask class="w-full" inputClass="w-full bg-white/5 border-white/10 text-white p-3 rounded-xl" placeholder="••••••••" required />
+          <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+          <InputText 
+            v-model="email" 
+            type="email" 
+            :class="['w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors', emailError ? 'border-red-500' : 'border-gray-300']" 
+            placeholder="correo@ejemplo.com" 
+          />
+          <span v-if="emailError" class="text-red-500 text-xs mt-1 block">{{ emailError }}</span>
         </div>
         
-        <Button label="Iniciar Sesión" icon="pi pi-lock" type="submit" class="w-full p-4 bg-gradient-to-r from-blue-600 to-indigo-600 border-none rounded-xl text-white font-bold shadow-lg shadow-blue-600/20" />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+          <Password 
+            v-model="password" 
+            :feedback="false" 
+            toggleMask 
+            class="w-full" 
+            :inputClass="['w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors', passwordError ? 'border-red-500' : 'border-gray-300']" 
+            placeholder="••••••••" 
+          />
+          <span v-if="passwordError" class="text-red-500 text-xs mt-1 block">{{ passwordError }}</span>
+        </div>
+        
+        <Button 
+          label="Iniciar Sesión" 
+          icon="pi pi-lock" 
+          type="submit" 
+          :loading="isSubmitting"
+          class="w-full p-3.5 mt-2 bg-blue-600 hover:bg-blue-700 border-none rounded-lg text-white font-semibold transition-colors shadow-md" 
+        />
       </form>
 
-      <div class="mt-8 text-center">
-        <router-link to="/" class="text-xs text-white/40 hover:text-white transition">Volver a la página principal</router-link>
+      <div class="mt-6 text-center">
+        <router-link to="/" class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
+          Volver a la página principal
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth.store';
 import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
@@ -41,26 +59,47 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
+import { useForm, useField } from 'vee-validate';
+import * as yup from 'yup';
 
-const email = ref('');
-const password = ref('');
 const auth = useAuthStore();
 const router = useRouter();
 const toast = useToast();
 
-const handleLogin = async () => {
+const schema = yup.object({
+  email: yup.string().required('El correo es obligatorio').email('Debe ser un correo válido'),
+  password: yup.string().required('La contraseña es obligatoria').min(6, 'Debe tener al menos 6 caracteres'),
+});
+
+const { handleSubmit, isSubmitting } = useForm({
+  validationSchema: schema,
+});
+
+const { value: email, errorMessage: emailError } = useField<string>('email');
+const { value: password, errorMessage: passwordError } = useField<string>('password');
+
+const onSubmit = handleSubmit(async (values) => {
   try {
-    await auth.login(email.value, password.value);
-    router.push('/admin/products');
-  } catch (err) {
-    toast.add({ severity: 'error', summary: 'Error de inicio de sesión', detail: 'Por favor, comprueba tus credenciales', life: 3000 });
+    await auth.login(values.email, values.password);
+    
+    // Redirigir según el rol del usuario
+    if (auth.user?.role === 'ADMIN') {
+      router.push('/admin/products');
+    } else {
+      router.push('/');
+    }
+    
+    toast.add({ severity: 'success', summary: 'Bienvenido', detail: 'Inicio de sesión correcto', life: 3000 });
+  } catch (err: any) {
+    const errorMsg = err.response?.data?.error || 'Por favor, comprueba tus credenciales';
+    toast.add({ severity: 'error', summary: 'Error de inicio de sesión', detail: errorMsg, life: 3000 });
   }
-};
+});
 </script>
 
 <style>
-/* PrimeVue overrides for dark theme feel */
+/* Reset PrimeVue default borders for simpler design if needed */
 .p-password input {
-    background: transparent !important;
+  box-shadow: none !important;
 }
 </style>
