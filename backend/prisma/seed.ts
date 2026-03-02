@@ -14,7 +14,7 @@ async function main() {
         create: {
             email: 'admin@nexus.com',
             password: hashedPassword,
-            name: 'Administrador Nexus',
+            role: 'ADMIN'
         },
     });
 
@@ -25,7 +25,7 @@ async function main() {
         create: {
             email: 'user@nexus.com',
             password: userPassword,
-            name: 'Usuario Prueba',
+            role: 'USER'
         },
     });
 
