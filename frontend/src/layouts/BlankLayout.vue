@@ -5,5 +5,4 @@
 </template>
 
 <script setup lang="ts">
-// Layout sin header ni footer para Login y Registro como pide la rúbrica
 </script>
