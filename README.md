@@ -8,13 +8,17 @@ Esta aplicación es el proyecto entregable para la Actividad de Aprendizaje de D
 - Docker Compose
 
 ## Arranque Rápido 
-El proyecto entero (frontend, backend y base de datos) está completamente contenerizado. Para la corrección, la aplicación estará disponible lanzando el siguiente comando en la raíz del proyecto:
 
-```bash
-docker-compose build ; docker-compose up
-```
+### Opción A: Ejecución con Docker (Recomendado para corrección)
+El proyecto entero (frontend, backend y base de datos) está completamente contenerizado. Lanza el siguiente comando en la raíz del proyecto:
 
-*(En PowerShell utiliza `;` en lugar de `&&`)*
+powershell
+docker-compose up --build -d
+
+3. **Acceso:**
+   - **Frontend:** [http://localhost:8080](http://localhost:8080)
+   - **Backend API:** [http://localhost:3000/api](http://localhost:3000/api)
+
 
 Una vez que los contenedores estén levantados, podrás acceder a la interfaz en:
 - **Frontend Pública:** http://localhost:8080
