@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page min-h-screen bg-gray-50 flex items-center justify-center p-6">
+  <div class="register-page min-h-screen bg-gray-50 flex items-center justify-center p-6">
     <Toast />
     
     <div class="w-full max-w-md bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 md:p-12 border border-gray-100">
@@ -7,9 +7,9 @@
         <router-link to="/" class="inline-flex items-center gap-2 mb-8">
           <span class="text-2xl font-black tracking-tighter text-gray-900">NEXUS</span>
         </router-link>
-        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Bienvenido de nuevo</h2>
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Crea tu cuenta</h2>
         <p class="mt-2 text-sm text-gray-500">
-          Accede a tu panel centralizado de inventario.
+          Únete a Nexus para gestionar tu inventario.
         </p>
       </div>
 
@@ -20,8 +20,8 @@
             id="email"
             v-model="email" 
             type="email" 
-            class="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all placeholder:text-gray-300" 
-            placeholder="admin@nexus.com" 
+            class="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all" 
+            placeholder="usuario@ejemplo.com" 
             :class="{ 'p-invalid': emailError }"
           />
           <small class="text-red-500 mt-1 block h-4 ml-1">{{ emailError }}</small>
@@ -32,7 +32,7 @@
           <Password 
             id="password"
             v-model="password" 
-            :feedback="false" 
+            :feedback="true" 
             toggleMask 
             class="w-full" 
             inputClass="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all font-mono" 
@@ -42,10 +42,25 @@
           <small class="text-red-500 mt-1 block h-4 ml-1">{{ passwordError }}</small>
         </div>
 
+        <div>
+          <label for="confirmPassword" class="block text-sm font-bold text-gray-700 mb-2 ml-1">Confirmar Contraseña</label>
+          <Password 
+            id="confirmPassword"
+            v-model="confirmPassword" 
+            :feedback="false" 
+            toggleMask 
+            class="w-full" 
+            inputClass="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all font-mono" 
+            placeholder="••••••••" 
+            :class="{ 'p-invalid': confirmPasswordError }"
+          />
+          <small class="text-red-500 mt-1 block h-4 ml-1">{{ confirmPasswordError }}</small>
+        </div>
+
         <div class="pt-4">
           <Button 
             type="submit" 
-            label="Iniciar Sesión" 
+            label="Registrarse" 
             :loading="isSubmitting"
             class="w-full !py-4 !rounded-2xl !bg-[#10b981] hover:!bg-[#059669] !border-none !text-white !font-bold !text-lg shadow-lg shadow-emerald-200 transition-all transform active:scale-[0.98]"
           />
@@ -56,14 +71,12 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { useAuthStore } from '../stores/auth.store';
 import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
-import Checkbox from 'primevue/checkbox';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { useForm, useField } from 'vee-validate';
@@ -76,6 +89,9 @@ const toast = useToast();
 const schema = yup.object({
   email: yup.string().required('El correo es obligatorio').email('Debe ser un correo válido'),
   password: yup.string().required('La contraseña es obligatoria').min(6, 'Debe tener al menos 6 caracteres'),
+  confirmPassword: yup.string()
+    .required('Confirma tu contraseña')
+    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden')
 });
 
 const { handleSubmit, isSubmitting } = useForm({
@@ -84,21 +100,18 @@ const { handleSubmit, isSubmitting } = useForm({
 
 const { value: email, errorMessage: emailError } = useField<string>('email');
 const { value: password, errorMessage: passwordError } = useField<string>('password');
+const { value: confirmPassword, errorMessage: confirmPasswordError } = useField<string>('confirmPassword');
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await auth.login(values.email, values.password);
-    
-    if (auth.user?.role === 'ADMIN') {
-      router.push('/admin/products');
-    } else {
-      router.push('/catalog');
-    }
-    
-    toast.add({ severity: 'success', summary: 'Bienvenido', detail: 'Inicio de sesión correcto', life: 3000 });
+    await auth.register(values.email, values.password);
+    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Cuenta creada correctamente. Ahora puedes iniciar sesión.', life: 3000 });
+    setTimeout(() => {
+      router.push('/login');
+    }, 2000);
   } catch (err: any) {
-    const errorMsg = err.response?.data?.error || (err.request ? 'Error de conexión con el servidor' : 'Por favor, comprueba tus credenciales');
-    toast.add({ severity: 'error', summary: 'Error de inicio de sesión', detail: errorMsg, life: 3000 });
+    const errorMsg = err.response?.data?.error || 'No se pudo crear la cuenta. El usuario podría ya existir.';
+    toast.add({ severity: 'error', summary: 'Error de registro', detail: errorMsg, life: 3000 });
   }
 });
 </script>

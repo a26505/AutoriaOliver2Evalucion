@@ -18,6 +18,10 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem('token', this.token);
       }
     },
+    async register(email: string, password: string) {
+      await api.post('/auth/register', { email, password });
+    },
+
     logout() {
       this.user = null;
       this.token = null;
