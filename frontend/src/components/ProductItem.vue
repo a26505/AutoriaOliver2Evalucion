@@ -1,5 +1,5 @@
 <template>
-  <div class="product-card group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white/50 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+  <div class="product-card group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
     <!-- Image Container -->
     <div class="aspect-square w-full overflow-hidden bg-gray-100">
       <img 
@@ -29,6 +29,7 @@
           text 
           aria-label="Add to cart" 
           class="!h-8 !w-8 hover:!bg-primary/10 hover:!text-primary transition-colors"
+          @click="addToCart"
         />
       </div>
     </div>
@@ -37,8 +38,9 @@
 
 <script setup lang="ts">
 import Button from 'primevue/button';
+import { useToast } from 'primevue/usetoast';
 
-defineProps<{
+const props = defineProps<{
   product: {
     id: string;
     name: string;
@@ -50,4 +52,15 @@ defineProps<{
     }
   }
 }>();
+
+const toast = useToast();
+
+const addToCart = () => {
+  toast.add({ 
+    severity: 'success', 
+    summary: 'Producto Añadido', 
+    detail: `${props.product.name} se ha añadido al carrito`, 
+    life: 2000 
+  });
+};
 </script>

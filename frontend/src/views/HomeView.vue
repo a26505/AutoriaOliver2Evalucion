@@ -63,27 +63,27 @@
           <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Catálogo en Vivo</h2>
           <p class="mt-4 text-lg text-gray-600">Explora una muestra de los productos gestionados en tiempo real.</p>
         </div>
-        <router-link to="/login">
+        <router-link :to="authStore.user ? '/catalog' : '/login'">
           <Button label="Ver catálogo completo" text icon="pi pi-external-link" iconPos="right" />
         </router-link>
       </div>
       
-      <div class="container mx-auto px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        <ProductItem v-for="product in products" :key="product.id" :product="product" />
+      <div class="container mx-auto px-6 lg:px-8">
+        <ProductGrid :products="products" />
       </div>
     </section>
 
     <!-- CTA Section -->
     <section class="py-24 bg-primary overflow-hidden relative">
-      <div class="absolute inset-0 opacity-10 pointer-events-none">
+      <div class="absolute inset-0 opacity-20 pointer-events-none">
         <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -mr-48 -mt-48 blur-3xl"></div>
         <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full -ml-48 -mb-48 blur-3xl"></div>
       </div>
       <div class="container mx-auto px-6 lg:px-8 relative text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6">¿Listo para revolucionar tu inventario?</h2>
-        <p class="text-lg text-white/80 max-w-2xl mx-auto mb-10">Únete a miles de administradores que ya confían en Nexus para el control total de sus activos.</p>
+        <h2 class="text-4xl font-black tracking-tight text-white sm:text-5xl mb-6 drop-shadow-sm">¿Listo para revolucionar tu inventario?</h2>
+        <p class="text-xl text-white font-medium max-w-2xl mx-auto mb-10 opacity-90">Únete a miles de administradores que ya confían en Nexus para el control total de sus activos.</p>
         <router-link to="/login">
-          <Button label="Empezar Gratis" severity="secondary" size="large" class="!px-10 font-bold" />
+          <Button label="Empezar Gratis" severity="secondary" size="large" class="!px-12 !py-4 rounded-2xl font-bold shadow-2xl transition-transform hover:scale-105" />
         </router-link>
       </div>
     </section>
@@ -93,10 +93,14 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue';
 import Button from 'primevue/button';
-import ProductItem from '../components/ProductItem.vue';
+import ProductGrid from '../components/ProductGrid.vue';
 import { useProductStore } from '../stores/product.store';
+import { useUIStore } from '../stores/ui.store';
+import { useAuthStore } from '../stores/auth.store';
 
 const productStore = useProductStore();
+const uiStore = useUIStore();
+const authStore = useAuthStore();
 const products = computed(() => productStore.products.slice(0, 4));
 
 const features = [
@@ -119,6 +123,7 @@ const features = [
 
 onMounted(() => {
   productStore.fetchProducts();
+  uiStore.setPage('Inicio', []);
 });
 </script>
 
