@@ -36,9 +36,15 @@
     </div>
     <div class="text-xs opacity-60 flex items-center gap-2 border-t border-indigo-600 pt-2">
       <i class="pi pi-home text-[10px]"></i>
-      <span>Admin</span>
-      <span>/</span>
-      <span class="font-bold text-white uppercase tracking-widest">{{ currentSection }}</span>
+      <router-link to="/admin/products" class="hover:text-white transition-colors">Admin</router-link>
+      <template v-for="(crumb, index) in uiStore.breadcrumbs" :key="index">
+        <template v-if="crumb.label !== 'Admin'">
+          <span>/</span>
+          <span :class="{'font-bold text-white uppercase tracking-widest': index === uiStore.breadcrumbs.length - 1}">
+            {{ crumb.label }}
+          </span>
+        </template>
+      </template>
     </div>
   </header>
 </template>
@@ -46,10 +52,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useAuthStore } from '../../stores/auth.store';
+import { useUIStore } from '../../stores/ui.store';
 import { useRouter, useRoute } from 'vue-router';
 import Button from 'primevue/button';
 
 const auth = useAuthStore();
+const uiStore = useUIStore();
 const router = useRouter();
 const route = useRoute();
 

@@ -11,14 +11,14 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy prisma schema first to generate client
+# Copy prisma schema
 COPY prisma ./prisma/
 
-# Generate Prisma client
-RUN npx prisma generate
-
-# Copy the rest of the source code
+# Copy the rest of the source code (excluding node_modules via .dockerignore)
 COPY . .
+
+# Generate Prisma client with the latest schema
+RUN npx prisma generate
 
 # Build TypeScript
 RUN npx tsc
@@ -26,8 +26,10 @@ RUN npx tsc
 # Expose port
 EXPOSE 3000
 
-# Añadir permisos al script de inicio
-RUN chmod +x start.sh
+# Añadir permisos al script de inicio y corregir line endings
+RUN apt-get update -y && apt-get install -y dos2unix
+RUN dos2unix start.sh && chmod +x start.sh
 
 # Start command
-CMD ["./start.sh"]
+CMD ["sh", "./start.sh"]
+

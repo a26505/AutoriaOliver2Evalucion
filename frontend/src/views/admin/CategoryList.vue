@@ -39,15 +39,19 @@ import { ref, onMounted } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import * as yup from 'yup';
 import { useCategoryStore } from '../../stores/category.store';
+import { useUIStore } from '../../stores/ui.store';
 import { useToast } from 'primevue/usetoast';
 import DataTable from 'primevue/datatable';
+import { useConfirm } from 'primevue/useconfirm';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dialog from 'primevue/dialog';
 
 const categoryStore = useCategoryStore();
+const uiStore = useUIStore();
 const toast = useToast();
+const confirm = useConfirm();
 const showDialog = ref(false);
 const isEditing = ref(false);
 const editingId = ref<string | null>(null);
@@ -89,12 +93,25 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-const confirmDelete = async (id: string) => {
-  await categoryStore.removeCategory(id);
-  toast.add({ severity: 'info', summary: 'Eliminada', detail: 'Categoría borrada', life: 3000 });
+const confirmDelete = (id: string) => {
+  confirm.require({
+    message: '¿Estás seguro de que quieres eliminar esta categoría?',
+    header: 'Confirmación de Eliminación',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await categoryStore.removeCategory(id);
+      toast.add({ severity: 'info', summary: 'Eliminada', detail: 'Categoría borrada', life: 3000 });
+    }
+  });
 };
 
 onMounted(() => {
   categoryStore.fetchCategories();
+  uiStore.setPage('Categorías', [
+    { label: 'Admin', to: '/admin/products' },
+    { label: 'Gestión de Categorías' }
+  ]);
 });
 </script>
+

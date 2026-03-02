@@ -9,19 +9,19 @@ export const getProducts = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-    const { name, description, price, stock, categoryId } = req.body;
+    const { name, description, price, stock, image, categoryId } = req.body;
     const product = await prisma.product.create({
-        data: { name, description, price, stock, categoryId }
+        data: { name, description, price, stock, image, categoryId }
     });
     res.status(201).json(product);
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { name, description, price, stock, categoryId } = req.body;
+    const { name, description, price, stock, image, categoryId } = req.body;
     const product = await prisma.product.update({
         where: { id },
-        data: { name, description, price, stock, categoryId }
+        data: { name, description, price, stock, image, categoryId }
     });
     res.json(product);
 };

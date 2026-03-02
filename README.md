@@ -11,8 +11,10 @@ Esta aplicación es el proyecto entregable para la Actividad de Aprendizaje de D
 El proyecto entero (frontend, backend y base de datos) está completamente contenerizado. Para la corrección, la aplicación estará disponible lanzando el siguiente comando en la raíz del proyecto:
 
 ```bash
-docker-compose build && docker compose up
+docker-compose build ; docker-compose up
 ```
+
+*(En PowerShell utiliza `;` en lugar de `&&`)*
 
 Una vez que los contenedores estén levantados, podrás acceder a la interfaz en:
 - **Frontend Pública:** http://localhost:8080
