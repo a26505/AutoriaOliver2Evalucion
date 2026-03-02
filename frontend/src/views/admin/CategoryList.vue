@@ -2,20 +2,23 @@
   <div class="w-full">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-bold text-gray-800">Categorías</h2>
-      <Button label="Añadir Categoría" icon="pi pi-plus" @click="showDialog = true" />
+      <Button label="Añadir Categoría" icon="pi pi-plus" @click="openNew" />
     </div>
 
     <DataTable :value="categoryStore.categories" :loading="categoryStore.loading" stripedRows class="p-datatable-sm shadow-sm rounded-lg overflow-hidden">
       <template #empty>No se encontraron categorías.</template>
       <Column field="name" header="Nombre" sortable></Column>
-      <Column header="Acciones" class="w-24">
+      <Column header="Acciones" class="w-32">
         <template #body="slotProps">
-          <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(slotProps.data.id)" />
+          <div class="flex gap-2">
+            <Button icon="pi pi-pencil" severity="warning" text rounded @click="editCategory(slotProps.data)" />
+            <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(slotProps.data.id)" />
+          </div>
         </template>
       </Column>
     </DataTable>
 
-    <Dialog v-model:visible="showDialog" header="Nueva Categoría" :style="{ width: '400px' }" modal class="p-fluid">
+    <Dialog v-model:visible="showDialog" :header="isEditing ? 'Editar Categoría' : 'Nueva Categoría'" :style="{ width: '400px' }" modal class="p-fluid">
       <form @submit="onSubmit" class="space-y-4 pt-4">
         <div class="field">
           <label for="name" class="block mb-1 font-bold">Nombre de la Categoría</label>
@@ -46,22 +49,43 @@ import Dialog from 'primevue/dialog';
 const categoryStore = useCategoryStore();
 const toast = useToast();
 const showDialog = ref(false);
+const isEditing = ref(false);
+const editingId = ref<string | null>(null);
 
 const schema = yup.object({
   name: yup.string().required('El nombre es obligatorio').min(2, 'Mínimo 2 caracteres')
 });
 
-const { handleSubmit, errors, resetForm } = useForm({ validationSchema: schema });
+const { handleSubmit, errors, resetForm, setValues } = useForm({ validationSchema: schema });
 const { value: name } = useField('name');
+
+const openNew = () => {
+  isEditing.value = false;
+  editingId.value = null;
+  resetForm();
+  showDialog.value = true;
+};
+
+const editCategory = (category: any) => {
+  isEditing.value = true;
+  editingId.value = category.id;
+  setValues({ name: category.name });
+  showDialog.value = true;
+};
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await categoryStore.addCategory(values.name);
-    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Categoría creada', life: 3000 });
+    if (isEditing.value && editingId.value) {
+      await categoryStore.updateCategory(editingId.value, values.name);
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Categoría actualizada', life: 3000 });
+    } else {
+      await categoryStore.addCategory(values.name);
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Categoría creada', life: 3000 });
+    }
     showDialog.value = false;
     resetForm();
   } catch (err) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Fallo al crear categoría' });
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Fallo al guardar categoría' });
   }
 });
 

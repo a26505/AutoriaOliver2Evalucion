@@ -2,7 +2,7 @@
   <div class="w-full">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-bold text-gray-800">Productos</h2>
-      <Button label="Añadir Producto" icon="pi pi-plus" @click="showDialog = true" />
+      <Button label="Añadir Producto" icon="pi pi-plus" @click="openNew" />
     </div>
 
     <DataTable :value="productStore.products" :loading="productStore.loading" stripedRows class="p-datatable-sm shadow-sm rounded-lg overflow-hidden">
@@ -19,14 +19,17 @@
           <Tag :severity="slotProps.data.stock > 10 ? 'success' : 'warning'" :value="slotProps.data.stock" />
         </template>
       </Column>
-      <Column header="Acciones" class="w-24">
+      <Column header="Acciones" class="w-32">
         <template #body="slotProps">
-          <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(slotProps.data.id)" />
+          <div class="flex gap-2">
+            <Button icon="pi pi-pencil" severity="warning" text rounded @click="editProduct(slotProps.data)" />
+            <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(slotProps.data.id)" />
+          </div>
         </template>
       </Column>
     </DataTable>
 
-    <Dialog v-model:visible="showDialog" header="Nuevo Producto" :style="{ width: '450px' }" modal class="p-fluid">
+    <Dialog v-model:visible="showDialog" :header="isEditing ? 'Editar Producto' : 'Nuevo Producto'" :style="{ width: '450px' }" modal class="p-fluid">
       <form @submit="onSubmit" class="space-y-4 pt-4">
         <div class="field">
           <label for="name" class="block mb-1 font-bold">Nombre</label>
@@ -77,6 +80,8 @@ const productStore = useProductStore();
 const categoryStore = useCategoryStore();
 const toast = useToast();
 const showDialog = ref(false);
+const isEditing = ref(false);
+const editingId = ref<string | null>(null);
 
 const schema = yup.object({
   name: yup.string().required('El nombre es obligatorio').min(3, 'Mínimo 3 caracteres'),
@@ -85,20 +90,44 @@ const schema = yup.object({
   categoryId: yup.string().required('Selecciona una categoría')
 });
 
-const { handleSubmit, errors, resetForm } = useForm({ validationSchema: schema });
+const { handleSubmit, errors, resetForm, setValues } = useForm({ validationSchema: schema });
 const { value: name } = useField('name');
 const { value: price } = useField('price');
 const { value: stock } = useField('stock');
 const { value: categoryId } = useField('categoryId');
 
+const openNew = () => {
+  isEditing.value = false;
+  editingId.value = null;
+  resetForm();
+  showDialog.value = true;
+};
+
+const editProduct = (product: any) => {
+  isEditing.value = true;
+  editingId.value = product.id;
+  setValues({
+    name: product.name,
+    price: product.price,
+    stock: product.stock,
+    categoryId: product.categoryId
+  });
+  showDialog.value = true;
+};
+
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await productStore.addProduct(values);
-    toast.add({ severity: 'success', summary: 'Éxito', detail: 'Producto creado', life: 3000 });
+    if (isEditing.value && editingId.value) {
+      await productStore.updateProduct(editingId.value, values);
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Producto actualizado', life: 3000 });
+    } else {
+      await productStore.addProduct(values);
+      toast.add({ severity: 'success', summary: 'Éxito', detail: 'Producto creado', life: 3000 });
+    }
     showDialog.value = false;
     resetForm();
   } catch (err) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Fallo al crear producto' });
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Fallo al guardar producto' });
   }
 });
 

@@ -22,6 +22,10 @@ export const useProductStore = defineStore('products', {
       await api.post('/products', product);
       await this.fetchProducts();
     },
+    async updateProduct(id: string, product: any) {
+      await api.put(`/products/${id}`, product);
+      await this.fetchProducts();
+    },
     async removeProduct(id: string) {
       await api.delete(`/products/${id}`);
       await this.fetchProducts();
