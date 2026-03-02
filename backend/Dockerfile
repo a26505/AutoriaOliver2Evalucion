@@ -26,5 +26,8 @@ RUN npx tsc
 # Expose port
 EXPOSE 3000
 
+# Añadir permisos al script de inicio
+RUN chmod +x start.sh
+
 # Start command
-CMD ["node", "dist/index.js"]
+CMD ["./start.sh"]
