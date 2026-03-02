@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-md">
+  <header class="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70">
     <div class="container mx-auto flex h-20 items-center justify-between px-6 lg:px-8">
       <!-- Logo -->
       <div class="flex items-center gap-8">
@@ -11,7 +11,7 @@
         <nav v-if="uiStore.breadcrumbs.length > 0" class="hidden md:flex items-center gap-2 text-sm">
           <div class="h-4 w-[1px] bg-gray-200 mx-2"></div>
           <template v-for="(crumb, index) in uiStore.breadcrumbs" :key="index">
-            <router-link v-if="crumb.to" :to="crumb.to" class="text-gray-500 hover:text-primary transition-colors font-medium">
+            <router-link v-if="crumb.to" :to="crumb.to" class="text-gray-500 hover:text-primary font-medium">
               {{ crumb.label }}
             </router-link>
             <span v-else class="text-gray-900 font-bold">{{ crumb.label }}</span>

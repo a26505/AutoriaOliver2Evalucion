@@ -20,7 +20,7 @@
             id="email"
             v-model="email" 
             type="email" 
-            class="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all placeholder:text-gray-300" 
+            class="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 placeholder:text-gray-300" 
             placeholder="admin@nexus.com" 
             :class="{ 'p-invalid': emailError }"
           />
@@ -35,7 +35,7 @@
             :feedback="false" 
             toggleMask 
             class="w-full" 
-            inputClass="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all font-mono" 
+            inputClass="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 font-mono" 
             placeholder="••••••••" 
             :class="{ 'p-invalid': passwordError }"
           />
@@ -47,7 +47,7 @@
             type="submit" 
             label="Iniciar Sesión" 
             :loading="isSubmitting"
-            class="w-full !py-4 !rounded-2xl !bg-[#10b981] hover:!bg-[#059669] !border-none !text-white !font-bold !text-lg shadow-lg shadow-emerald-200 transition-all transform active:scale-[0.98]"
+            class="w-full !py-4 !rounded-2xl !bg-[#10b981] hover:!bg-[#059669] !border-none !text-white !font-bold !text-lg shadow-lg shadow-emerald-200"
           />
         </div>
       </form>

@@ -16,23 +16,13 @@
                 <Button label="Comenzar ahora" size="large" raised class="shadow-xl shadow-primary/30" />
               </router-link>
               <a href="#features" class="text-sm font-semibold leading-6 text-gray-900 flex items-center gap-2 group">
-                Saber más <i class="pi pi-arrow-right transition-transform group-hover:translate-x-1"></i>
+                Saber más <i class="pi pi-arrow-right"></i>
               </a>
             </div>
           </div>
           <div class="relative hidden lg:block">
             <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/20 ring-1 ring-gray-200">
               <img src="https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?auto=format&fit=crop&q=80&w=1200" alt="App screenshot" class="w-full h-full object-cover" />
-            </div>
-            <!-- Floating elements -->
-            <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-4 animate-bounce-slow">
-              <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <i class="pi pi-check-circle text-xl"></i>
-              </div>
-              <div>
-                <p class="text-sm font-bold text-gray-900">+1,200 Unidades</p>
-                <p class="text-xs text-gray-500">Añadidas hoy</p>
-              </div>
             </div>
           </div>
         </div>
@@ -46,7 +36,7 @@
         <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl italic">Potencia tu negocio sin límites</p>
       </div>
       <div class="container mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div v-for="feature in features" :key="feature.title" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md hover:-translate-y-1">
+        <div v-for="feature in features" :key="feature.title" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
           <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
             <i :class="[feature.icon, 'text-2xl']"></i>
           </div>
@@ -83,7 +73,7 @@
         <h2 class="text-4xl font-black tracking-tight text-white sm:text-5xl mb-6 drop-shadow-sm">¿Listo para revolucionar tu inventario?</h2>
         <p class="text-xl text-white font-medium max-w-2xl mx-auto mb-10 opacity-90">Únete a miles de administradores que ya confían en Nexus para el control total de sus activos.</p>
         <router-link to="/login">
-          <Button label="Empezar Gratis" severity="secondary" size="large" class="!px-12 !py-4 rounded-2xl font-bold shadow-2xl transition-transform hover:scale-105" />
+          <Button label="Empezar Gratis" severity="secondary" size="large" class="!px-12 !py-4 rounded-2xl font-bold shadow-2xl" />
         </router-link>
       </div>
     </section>
@@ -128,18 +118,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.animate-bounce-slow {
-  animation: bounce 3s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(-5%);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-  }
-  50% {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
-}
 </style>
