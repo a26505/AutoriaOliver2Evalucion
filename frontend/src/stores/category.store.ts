@@ -3,9 +3,14 @@ import axios from 'axios';
 
 const api = axios.create({ baseURL: 'http://localhost:3000/api' });
 
+export interface Category {
+  id: string;
+  name: string;
+}
+
 export const useCategoryStore = defineStore('categories', {
   state: () => ({
-    categories: [] as any[],
+    categories: [] as Category[],
     loading: false
   }),
   actions: {
