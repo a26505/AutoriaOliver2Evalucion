@@ -17,7 +17,7 @@
           <h3 class="font-bold text-white mb-6 uppercase text-xs tracking-widest">{{ section.title }}</h3>
           <ul class="space-y-4">
             <li v-for="link in section.links" :key="link.label">
-              <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">{{ link.label }}</a>
+              <a href="#" class="text-gray-400 hover:text-white text-sm">{{ link.label }}</a>
             </li>
           </ul>
         </div>

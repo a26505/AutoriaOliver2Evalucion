@@ -1,11 +1,11 @@
 <template>
-  <div class="product-card group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+  <div class="product-card group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
     <!-- Image Container -->
     <div class="aspect-square w-full overflow-hidden bg-gray-100">
       <img 
         :src="product.image || 'https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?auto=format&fit=crop&q=80&w=400'" 
         :alt="product.name"
-        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        class="h-full w-full object-cover"
       />
     </div>
 
@@ -24,12 +24,14 @@
       <div class="mt-auto flex items-center justify-between">
         <span class="text-xl font-black text-gray-900">${{ product.price }}</span>
         <Button 
-          icon="pi pi-plus" 
+          icon="pi pi-minus" 
           rounded 
           text 
-          aria-label="Add to cart" 
-          class="!h-8 !w-8 hover:!bg-primary/10 hover:!text-primary transition-colors"
-          @click="addToCart"
+          severity="danger"
+          aria-label="Reduce stock" 
+          class="!h-8 !w-8 hover:!bg-red-50"
+          :disabled="product.stock <= 0"
+          @click="reduceStock"
         />
       </div>
     </div>
@@ -38,7 +40,7 @@
 
 <script setup lang="ts">
 import Button from 'primevue/button';
-import { useToast } from 'primevue/usetoast';
+import { useProductStore } from '../stores/product.store';
 
 const props = defineProps<{
   product: {
@@ -47,20 +49,20 @@ const props = defineProps<{
     price: number;
     stock: number;
     image?: string;
+    categoryId: string;
     category?: {
       name: string;
     }
   }
 }>();
 
-const toast = useToast();
+const productStore = useProductStore();
 
-const addToCart = () => {
-  toast.add({ 
-    severity: 'success', 
-    summary: 'Producto Añadido', 
-    detail: `${props.product.name} se ha añadido al carrito`, 
-    life: 2000 
-  });
+const reduceStock = async () => {
+  if (props.product.stock > 0) {
+    await productStore.updateProduct(props.product.id, {
+      stock: props.product.stock - 1
+    });
+  }
 };
 </script>

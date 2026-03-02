@@ -15,7 +15,13 @@ El proyecto entero (frontend, backend y base de datos) está completamente conte
 powershell
 docker-compose up --build -d
 
-3. **Acceso:**
+3. **Restaurar Productos (Seed):**
+   Si la base de datos está vacía, puedes cargar los productos por defecto con:
+   ```powershell
+   cmd /c "npx prisma db seed"  # Ejecutar en la carpeta /backend
+   ```
+
+4. **Acceso:**
    - **Frontend:** [http://localhost:8080](http://localhost:8080)
    - **Backend API:** [http://localhost:3000/api](http://localhost:3000/api)
 
