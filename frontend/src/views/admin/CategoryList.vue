@@ -9,10 +9,10 @@
       <template #empty>No se encontraron categorías.</template>
       <Column field="name" header="Nombre" sortable></Column>
       <Column header="Acciones" class="w-32">
-        <template #body="slotProps">
+        <template #body="{ data }">
           <div class="flex gap-2">
-            <Button icon="pi pi-pencil" severity="warning" text rounded @click="editCategory(slotProps.data)" />
-            <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(slotProps.data.id)" />
+            <Button icon="pi pi-pencil" severity="warning" text rounded @click="editCategory(data)" />
+            <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(data.id)" />
           </div>
         </template>
       </Column>
@@ -60,8 +60,8 @@ const schema = yup.object({
   name: yup.string().required('El nombre es obligatorio').min(2, 'Mínimo 2 caracteres')
 });
 
-const { handleSubmit, errors, resetForm, setValues } = useForm({ validationSchema: schema });
-const { value: name } = useField('name');
+const { handleSubmit, errors, resetForm, setValues } = useForm<{ name: string }>({ validationSchema: schema });
+const { value: name } = useField<string>('name');
 
 const openNew = () => {
   isEditing.value = false;

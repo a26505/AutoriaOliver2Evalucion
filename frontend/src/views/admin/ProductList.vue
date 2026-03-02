@@ -8,27 +8,27 @@
     <DataTable :value="productStore.products" :loading="productStore.loading" stripedRows class="p-datatable-sm shadow-sm rounded-lg overflow-hidden">
       <template #empty>No se encontraron productos.</template>
       <Column header="Imagen" class="w-20">
-        <template #body="slotProps">
-          <img :src="slotProps.data.image || 'https://via.placeholder.com/50'" class="w-12 h-12 object-cover rounded-md shadow-sm" />
+        <template #body="{ data }">
+          <img :src="data.image || 'https://via.placeholder.com/50'" class="w-12 h-12 object-cover rounded-md shadow-sm" />
         </template>
       </Column>
       <Column field="name" header="Nombre" sortable></Column>
       <Column field="category.name" header="Categoría" sortable></Column>
       <Column field="price" header="Precio" sortable>
-        <template #body="slotProps">
-          ${{ slotProps.data.price }}
+        <template #body="{ data }">
+          ${{ data.price }}
         </template>
       </Column>
       <Column field="stock" header="Stock" sortable>
-        <template #body="slotProps">
-          <Tag style="background: #9333ea; color: white" :value="slotProps.data.stock" />
+        <template #body="{ data }">
+          <Tag style="background: #9333ea; color: white" :value="data.stock" />
         </template>
       </Column>
       <Column header="Acciones" class="w-32">
-        <template #body="slotProps">
+        <template #body="{ data }">
           <div class="flex gap-2">
-            <Button icon="pi pi-pencil" severity="warning" text rounded @click="editProduct(slotProps.data)" />
-            <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(slotProps.data.id)" />
+            <Button icon="pi pi-pencil" severity="warning" text rounded @click="editProduct(data)" />
+            <Button icon="pi pi-trash" severity="danger" text rounded @click="confirmDelete(data.id)" />
           </div>
         </template>
       </Column>
@@ -105,12 +105,20 @@ const schema = yup.object({
   categoryId: yup.string().required('Selecciona una categoría')
 });
 
-const { handleSubmit, errors, resetForm, setValues } = useForm({ validationSchema: schema });
-const { value: name } = useField('name');
-const { value: image } = useField('image');
-const { value: price } = useField('price');
-const { value: stock } = useField('stock');
-const { value: categoryId } = useField('categoryId');
+interface ProductForm {
+  name: string;
+  image?: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+}
+
+const { handleSubmit, errors, resetForm, setValues } = useForm<ProductForm>({ validationSchema: schema });
+const { value: name } = useField<string>('name');
+const { value: image } = useField<string | undefined>('image');
+const { value: price } = useField<number>('price');
+const { value: stock } = useField<number>('stock');
+const { value: categoryId } = useField<string>('categoryId');
 
 const openNew = () => {
   isEditing.value = false;
