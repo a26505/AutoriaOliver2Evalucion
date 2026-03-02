@@ -50,8 +50,7 @@ async function main() {
         { name: 'Ratón Ergonómico', price: 65, stock: 40, categoryId: electronics.id, image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800' },
         { name: 'Escritorio Premium Madera', price: 450, stock: 10, categoryId: furniture.id, image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800' },
         { name: 'Silla Pro-Gamer', price: 299, stock: 15, categoryId: furniture.id, image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=800' },
-        { name: 'Lámpara de Diseño', price: 85, stock: 30, categoryId: furniture.id, image: 'https://images.unsplash.com/photo-1507473884658-c7a3dc8924e5?auto=format&fit=crop&q=80&w=800' },
-        { name: 'Estantería Minimalista', price: 150, stock: 12, categoryId: furniture.id, image: 'https://images.unsplash.com/photo-1594620302200-9a7621430e3f?auto=format&fit=crop&q=80&w=800' },
+
     ];
 
     // Limpiar productos existentes para un seed limpio
