@@ -1,24 +1,92 @@
 <template>
-  <div class="home-content py-12 px-6 max-w-6xl mx-auto">
-    <section class="text-center mb-16">
-      <h1 class="text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-        Gestión Moderna de Inventario
-      </h1>
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-        Optimiza tus operaciones con nuestro sistema de inventario rápido, seguro y bonito con el Sistema Nexus.
-      </p>
+  <div class="home-page overflow-x-hidden">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-white py-24 sm:py-32">
+      <div class="container mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="max-w-2xl">
+            <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-7xl mb-6">
+              Domina tu <span class="text-purple-600">Stock</span> con Inteligencia
+            </h1>
+            <p class="text-lg leading-8 text-gray-600 mb-10">
+              Nexus es la plataforma definitiva para gestionar inventarios a gran escala. Velocidad, precisión y diseño premium integrados en una sola herramienta.
+            </p>
+            <div class="flex items-center gap-x-6">
+              <router-link to="/login">
+                <Button label="Comenzar ahora" size="large" raised class="shadow-xl shadow-primary/30" />
+              </router-link>
+              <a href="#features" class="text-sm font-semibold leading-6 text-gray-900 flex items-center gap-2 group">
+                Saber más <i class="pi pi-arrow-right transition-transform group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+          <div class="relative hidden lg:block">
+            <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/20 ring-1 ring-gray-200">
+              <img src="https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?auto=format&fit=crop&q=80&w=1200" alt="App screenshot" class="w-full h-full object-cover" />
+            </div>
+            <!-- Floating elements -->
+            <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-4 animate-bounce-slow">
+              <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <i class="pi pi-check-circle text-xl"></i>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-gray-900">+1,200 Unidades</p>
+                <p class="text-xs text-gray-500">Añadidas hoy</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <div class="mb-12">
-      <h2 class="text-2xl font-bold mb-6">Productos Destacados</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <ProductItem 
-          v-for="product in products" 
-          :key="product.id" 
-          :product="product" 
-        />
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-gray-50">
+      <div class="container mx-auto px-6 lg:px-8 text-center mb-16">
+        <h2 class="text-base font-semibold leading-7 text-primary uppercase tracking-widest">Características</h2>
+        <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl italic">Potencia tu negocio sin límites</p>
       </div>
-    </div>
+      <div class="container mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div v-for="feature in features" :key="feature.title" class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+            <i :class="[feature.icon, 'text-2xl']"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3">{{ feature.title }}</h3>
+          <p class="text-gray-600 leading-relaxed">{{ feature.description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Showcase -->
+    <section class="py-24 bg-white">
+      <div class="container mx-auto px-6 lg:px-8 flex items-end justify-between mb-12">
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Catálogo en Vivo</h2>
+          <p class="mt-4 text-lg text-gray-600">Explora una muestra de los productos gestionados en tiempo real.</p>
+        </div>
+        <router-link to="/login">
+          <Button label="Ver catálogo completo" text icon="pi pi-external-link" iconPos="right" />
+        </router-link>
+      </div>
+      
+      <div class="container mx-auto px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <ProductItem v-for="product in products" :key="product.id" :product="product" />
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-primary overflow-hidden relative">
+      <div class="absolute inset-0 opacity-10 pointer-events-none">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -mr-48 -mt-48 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full -ml-48 -mb-48 blur-3xl"></div>
+      </div>
+      <div class="container mx-auto px-6 lg:px-8 relative text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6">¿Listo para revolucionar tu inventario?</h2>
+        <p class="text-lg text-white/80 max-w-2xl mx-auto mb-10">Únete a miles de administradores que ya confían en Nexus para el control total de sus activos.</p>
+        <router-link to="/login">
+          <Button label="Empezar Gratis" severity="secondary" size="large" class="!px-10 font-bold" />
+        </router-link>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -31,7 +99,42 @@ import { useProductStore } from '../stores/product.store';
 const productStore = useProductStore();
 const products = computed(() => productStore.products.slice(0, 4));
 
+const features = [
+  {
+    title: 'Control Total',
+    description: 'Gestión granular de stock, categorías y movimientos con auditoría en tiempo real.',
+    icon: 'pi pi-chart-bar'
+  },
+  {
+    title: 'Nube Segura',
+    description: 'Tus datos protegidos y disponibles 24/7 desde cualquier dispositivo.',
+    icon: 'pi pi-cloud'
+  },
+  {
+    title: 'IA Predictiva',
+    description: 'Anticípate a la demanda con nuestro motor de análisis sugerido.',
+    icon: 'pi pi-bolt'
+  }
+];
+
 onMounted(() => {
   productStore.fetchProducts();
 });
 </script>
+
+<style scoped>
+.animate-bounce-slow {
+  animation: bounce 3s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+</style>

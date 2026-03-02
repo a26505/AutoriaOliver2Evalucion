@@ -7,6 +7,11 @@
 
     <DataTable :value="productStore.products" :loading="productStore.loading" stripedRows class="p-datatable-sm shadow-sm rounded-lg overflow-hidden">
       <template #empty>No se encontraron productos.</template>
+      <Column header="Imagen" class="w-20">
+        <template #body="slotProps">
+          <img :src="slotProps.data.image || 'https://via.placeholder.com/50'" class="w-12 h-12 object-cover rounded-md shadow-sm" />
+        </template>
+      </Column>
       <Column field="name" header="Nombre" sortable></Column>
       <Column field="category.name" header="Categoría" sortable></Column>
       <Column field="price" header="Precio" sortable>
@@ -16,7 +21,7 @@
       </Column>
       <Column field="stock" header="Stock" sortable>
         <template #body="slotProps">
-          <Tag :severity="slotProps.data.stock > 10 ? 'success' : 'warning'" :value="slotProps.data.stock" />
+          <Tag style="background: #9333ea; color: white" :value="slotProps.data.stock" />
         </template>
       </Column>
       <Column header="Acciones" class="w-32">
@@ -35,6 +40,11 @@
           <label for="name" class="block mb-1 font-bold">Nombre</label>
           <InputText id="name" v-model="name" :class="{ 'p-invalid': errors.name }" />
           <small class="p-error">{{ errors.name }}</small>
+        </div>
+        <div class="field">
+          <label for="image" class="block mb-1 font-bold">URL de Imagen</label>
+          <InputText id="image" v-model="image" :class="{ 'p-invalid': errors.image }" placeholder="https://..." />
+          <small class="p-error">{{ errors.image }}</small>
         </div>
         <div class="field">
           <label for="price" class="block mb-1 font-bold">Precio</label>
@@ -85,6 +95,7 @@ const editingId = ref<string | null>(null);
 
 const schema = yup.object({
   name: yup.string().required('El nombre es obligatorio').min(3, 'Mínimo 3 caracteres'),
+  image: yup.string().url('Debe ser una URL válida').optional().nullable(),
   price: yup.number().required('El precio es obligatorio').moreThan(0, 'El precio debe ser mayor a 0'),
   stock: yup.number().required('El stock es obligatorio').integer().min(0, 'No puede ser negativo'),
   categoryId: yup.string().required('Selecciona una categoría')
@@ -92,6 +103,7 @@ const schema = yup.object({
 
 const { handleSubmit, errors, resetForm, setValues } = useForm({ validationSchema: schema });
 const { value: name } = useField('name');
+const { value: image } = useField('image');
 const { value: price } = useField('price');
 const { value: stock } = useField('stock');
 const { value: categoryId } = useField('categoryId');
@@ -108,6 +120,7 @@ const editProduct = (product: any) => {
   editingId.value = product.id;
   setValues({
     name: product.name,
+    image: product.image,
     price: product.price,
     stock: product.stock,
     categoryId: product.categoryId
@@ -131,13 +144,27 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-const confirmDelete = async (id: string) => {
-  await productStore.removeProduct(id);
-  toast.add({ severity: 'info', summary: 'Eliminado', detail: 'Producto borrado', life: 3000 });
+const confirm = useConfirm();
+
+const confirmDelete = (id: string) => {
+  confirm.require({
+    message: '¿Estás seguro de que quieres eliminar este producto?',
+    header: 'Confirmación de Eliminación',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await productStore.removeProduct(id);
+      toast.add({ severity: 'info', summary: 'Eliminado', detail: 'Producto borrado', life: 3000 });
+    }
+  });
 };
 
 onMounted(() => {
   productStore.fetchProducts();
   categoryStore.fetchCategories();
 });
+</script>
+
+<script lang="ts">
+import { useConfirm } from 'primevue/useconfirm';
 </script>

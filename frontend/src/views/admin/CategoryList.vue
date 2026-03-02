@@ -89,12 +89,26 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-const confirmDelete = async (id: string) => {
-  await categoryStore.removeCategory(id);
-  toast.add({ severity: 'info', summary: 'Eliminada', detail: 'Categoría borrada', life: 3000 });
+const confirm = useConfirm();
+
+const confirmDelete = (id: string) => {
+  confirm.require({
+    message: '¿Estás seguro de que quieres eliminar esta categoría?',
+    header: 'Confirmación de Eliminación',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await categoryStore.removeCategory(id);
+      toast.add({ severity: 'info', summary: 'Eliminada', detail: 'Categoría borrada', life: 3000 });
+    }
+  });
 };
 
 onMounted(() => {
   categoryStore.fetchCategories();
 });
+</script>
+
+<script lang="ts">
+import { useConfirm } from 'primevue/useconfirm';
 </script>

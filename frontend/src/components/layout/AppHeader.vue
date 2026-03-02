@@ -1,24 +1,32 @@
 <template>
-  <header class="p-6 bg-white shadow-sm flex justify-between items-center px-12">
-    <div class="text-2xl font-bold text-blue-600 tracking-wider uppercase">NEXUS</div>
-    <div class="flex gap-4 items-center">
-      <router-link to="/" class="hover:text-blue-600 transition-colors font-medium text-gray-700">Inicio</router-link>
-      
-      <template v-if="authStore.user">
-        <span class="text-gray-600 mx-2">Hola, <span class="font-bold border-b-2 border-blue-500">{{ authStore.user.email }}</span></span>
-        
-        <router-link v-if="authStore.user.role === 'ADMIN'" to="/admin/products">
-          <Button label="Panel Admin" icon="pi pi-cog" severity="info" text />
-        </router-link>
-        
-        <Button label="Cerrar sesión" icon="pi pi-sign-out" severity="danger" text @click="handleLogout" />
-      </template>
+  <header class="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-md">
+    <div class="container mx-auto flex h-20 items-center justify-between px-6 lg:px-8">
+      <!-- Logo -->
+      <router-link to="/" class="flex items-center gap-2 group">
+        <span class="text-2xl font-black tracking-tighter text-gray-900">NEXUS</span>
+      </router-link>
 
-      <template v-else>
-        <router-link to="/login">
-          <Button label="Iniciar Sesión" icon="pi pi-user" />
-        </router-link>
-      </template>
+      <!-- Actions -->
+      <div class="flex items-center gap-4">
+        <template v-if="authStore.user">
+          <div class="hidden sm:flex items-center gap-2 bg-gray-100/50 px-4 py-2 rounded-full border border-gray-200">
+            <i class="pi pi-user text-gray-400"></i>
+            <span class="text-xs font-bold text-gray-700">{{ authStore.user.email }}</span>
+          </div>
+          
+          <router-link v-if="authStore.user.role === 'ADMIN'" to="/admin/products">
+            <Button icon="pi pi-cog" rounded text severity="secondary" v-tooltip.bottom="'Administración'" />
+          </router-link>
+          
+          <Button icon="pi pi-sign-out" rounded text severity="danger" @click="handleLogout" v-tooltip.bottom="'Cerrar sesión'" />
+        </template>
+
+        <template v-else>
+          <router-link to="/login">
+            <Button label="Acceso" icon="pi pi-user" rounded outlined size="small" />
+          </router-link>
+        </template>
+      </div>
     </div>
   </header>
 </template>

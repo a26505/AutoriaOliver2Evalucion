@@ -1,52 +1,68 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-50 text-gray-800">
+  <div class="login-page min-h-screen bg-gray-50 flex items-center justify-center p-6">
     <Toast />
-
-    <div class="px-8 py-10 bg-white shadow-xl rounded-2xl w-full max-w-md border border-gray-100">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Bienevenido</h2>
-        <p class="text-gray-500 text-sm mt-2">Inicia sesión en tu cuenta</p>
+    
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 md:p-12 border border-gray-100">
+      <div class="mb-10 text-center">
+        <router-link to="/" class="inline-flex items-center gap-2 mb-8">
+          <span class="text-2xl font-black tracking-tighter text-gray-900">NEXUS</span>
+        </router-link>
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Bienvenido de nuevo</h2>
+        <p class="mt-2 text-sm text-gray-500">
+          Accede a tu panel centralizado de inventario.
+        </p>
       </div>
-      
+
       <form @submit.prevent="onSubmit" class="space-y-5">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+          <label for="email" class="block text-sm font-bold text-gray-700 mb-2 ml-1">Correo Electrónico</label>
           <InputText 
+            id="email"
             v-model="email" 
             type="email" 
-            :class="['w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors', emailError ? 'border-red-500' : 'border-gray-300']" 
-            placeholder="correo@ejemplo.com" 
+            class="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all placeholder:text-gray-300" 
+            placeholder="admin@nexus.com" 
+            :class="{ 'p-invalid': emailError }"
           />
-          <span v-if="emailError" class="text-red-500 text-xs mt-1 block">{{ emailError }}</span>
+          <small class="text-red-500 mt-1 block h-4 ml-1">{{ emailError }}</small>
         </div>
-        
+
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+          <label for="password" class="block text-sm font-bold text-gray-700 mb-2 ml-1">Contraseña</label>
           <Password 
+            id="password"
             v-model="password" 
             :feedback="false" 
             toggleMask 
             class="w-full" 
-            :inputClass="['w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors', passwordError ? 'border-red-500' : 'border-gray-300']" 
+            inputClass="w-full !p-4 !rounded-2xl !border-gray-100 !bg-gray-50/50 focus:!bg-white focus:!ring-2 focus:!ring-primary/20 transition-all font-mono" 
             placeholder="••••••••" 
+            :class="{ 'p-invalid': passwordError }"
           />
-          <span v-if="passwordError" class="text-red-500 text-xs mt-1 block">{{ passwordError }}</span>
+          <small class="text-red-500 mt-1 block h-4 ml-1">{{ passwordError }}</small>
         </div>
-        
-        <Button 
-          label="Iniciar Sesión" 
-          icon="pi pi-lock" 
-          type="submit" 
-          :loading="isSubmitting"
-          class="w-full p-3.5 mt-2 bg-blue-600 hover:bg-blue-700 border-none rounded-lg text-white font-semibold transition-colors shadow-md" 
-        />
-      </form>
 
-      <div class="mt-6 text-center">
-        <router-link to="/" class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
-          Volver a la página principal
-        </router-link>
-      </div>
+        <div class="flex items-center justify-between pt-2">
+          <div class="flex items-center">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <Checkbox id="remember-me" name="remember-me" :binary="true" class="!h-5 !w-5" />
+              <span class="text-sm font-medium text-gray-500">Recuérdame</span>
+            </label>
+          </div>
+          <div class="text-sm">
+            <a href="#" class="font-bold text-gray-900 hover:text-primary transition-colors">¿Olvidaste la contraseña?</a>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <Button 
+            type="submit" 
+            label="Iniciar Sesión" 
+            :loading="isSubmitting"
+            class="w-full !py-4 !rounded-2xl !bg-[#10b981] hover:!bg-[#059669] !border-none !text-white !font-bold !text-lg shadow-lg shadow-emerald-200 transition-all transform active:scale-[0.98]"
+          />
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -57,6 +73,7 @@ import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
+import Checkbox from 'primevue/checkbox';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { useForm, useField } from 'vee-validate';
@@ -82,7 +99,6 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await auth.login(values.email, values.password);
     
-    // Redirigir según el rol del usuario
     if (auth.user?.role === 'ADMIN') {
       router.push('/admin/products');
     } else {
@@ -91,15 +107,14 @@ const onSubmit = handleSubmit(async (values) => {
     
     toast.add({ severity: 'success', summary: 'Bienvenido', detail: 'Inicio de sesión correcto', life: 3000 });
   } catch (err: any) {
-    const errorMsg = err.response?.data?.error || 'Por favor, comprueba tus credenciales';
+    const errorMsg = err.response?.data?.error || (err.request ? 'Error de conexión con el servidor' : 'Por favor, comprueba tus credenciales');
     toast.add({ severity: 'error', summary: 'Error de inicio de sesión', detail: errorMsg, life: 3000 });
   }
 });
 </script>
 
-<style>
-/* Reset PrimeVue default borders for simpler design if needed */
-.p-password input {
-  box-shadow: none !important;
+<style scoped>
+.p-invalid {
+  border-color: #ef4444 !important;
 }
 </style>

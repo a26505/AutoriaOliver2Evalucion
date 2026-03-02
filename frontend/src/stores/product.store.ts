@@ -3,9 +3,23 @@ import axios from 'axios';
 
 const api = axios.create({ baseURL: 'http://localhost:3000/api' });
 
+export interface Product {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  stock: number;
+  image?: string;
+  categoryId: string;
+  category?: {
+    id: string;
+    name: string;
+  }
+}
+
 export const useProductStore = defineStore('products', {
   state: () => ({
-    products: [] as any[],
+    products: [] as Product[],
     loading: false
   }),
   actions: {
@@ -18,11 +32,11 @@ export const useProductStore = defineStore('products', {
         this.loading = false;
       }
     },
-    async addProduct(product: any) {
+    async addProduct(product: Partial<Product>) {
       await api.post('/products', product);
       await this.fetchProducts();
     },
-    async updateProduct(id: string, product: any) {
+    async updateProduct(id: string, product: Partial<Product>) {
       await api.put(`/products/${id}`, product);
       await this.fetchProducts();
     },

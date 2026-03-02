@@ -9,11 +9,14 @@ import 'primeicons/primeicons.css';
 import './style.css';
 
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
+import Tooltip from 'primevue/tooltip';
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+app.directive('tooltip', Tooltip);
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
@@ -23,5 +26,6 @@ app.use(PrimeVue, {
   }
 });
 app.use(ToastService);
+app.use(ConfirmationService);
 
 app.mount('#app');
